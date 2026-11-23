@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#141816"><meta name="description" content="REDLINE: Polat and Elif’s Istanbul story. Drift, explore Galata, take jobs and escape police on foot or by car.">
+  <title>REDLINE 3.1 — Galata Chronicles</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-label="REDLINE tepeden görünümlü araba oyunu"></canvas>
+  <div id="vignette"></div>
+  <div id="menu" class="screen menu-screen">
+    <section class="menu-panel">
+      <div class="brand"><span class="brand-mark">R</span><span>REDLINE<small>GALATA CHRONICLES</small></span><span class="edition">VOL. 03.1</span></div>
+      <div class="language-switch" role="group" aria-label="Dil / Language"><span>Dil / Language</span><button data-language="tr" data-no-i18n aria-pressed="true">Türkçe</button><button data-language="en" data-no-i18n aria-pressed="false">English</button></div>
+      <div class="eyebrow"><span class="live-dot"></span> ŞEHİR SENİN. KURALLAR ONLARIN.</div>
+      <h1>ŞEHRİ<br><em>YANLA.</em></h1>
+      <p class="intro">Galata'nın arka sokakları.<br>Polat'ın hikâyesi burada başlıyor.</p>
+      <div class="menu-options">
+        <button id="play" class="primary"><span>KOVALAMACAYI BAŞLAT</span><span class="arrow">↗</span></button>
+        <div class="mode-select" role="group" aria-label="Oyun modu"><button data-mode="story">HİKÂYE</button><button data-mode="chase" class="selected">KOVALAMACA</button><button data-mode="chaos">SONSUZ KAOS</button><button data-mode="free">SERBEST</button></div>
+        <div class="mode-select map-choice"><button data-map-id="real">GERÇEK GALATA</button><button data-map-id="classic">KURGU İSTANBUL</button></div><div id="chaos-settings" class="chaos-settings hidden"><span>KAOS SEVİYESİ · KAÇIŞ YOK</span><div id="chaos-stars" role="group" aria-label="Kaos yıldız seviyesi"><button data-stars="1" aria-label="1 yıldız">1 ★</button><button data-stars="2" aria-label="2 yıldız">2 ★</button><button data-stars="3" aria-label="3 yıldız">3 ★</button><button data-stars="4" aria-label="4 yıldız">4 ★</button><button data-stars="5" aria-label="5 yıldız">5 ★</button></div><small id="chaos-description"></small></div>
+        <div class="secondary-row"><button id="garage-open"><span class="outline-icon">▱</span> GARAJ <span id="car-count">01 / 04</span></button><button id="help-open">NASIL OYNANIR <span>↗</span></button></div>
+        <div class="secondary-row progression-row"><button id="city-open">ŞEHİR RUHSATLARI <span id="region-count">01 / 04</span></button><button id="workshop-open">ARAÇ GELİŞTİR <span>↗</span></button></div>
+      </div>
+      <div class="secondary-row"><button id="journal-menu">H · HİKÂYE / İŞLER</button><button id="armory-menu">O · SİLAHLAR</button></div><div class="menu-records"><button id="records-open" aria-label="Rekorlar ve sürüş geçmişi"><span>EN İYİ SKOR ↗</span><strong id="menu-best">000000</strong></button><div><span>CÜZDAN</span><strong id="menu-wallet">₺ 0</strong></div></div>
+      <footer><span><i></i> YAKALANMAK BİR SEÇENEK DEĞİL.</span><button id="settings-open" aria-label="Ayarlar">AYARLAR ⚙</button></footer>
+    </section>
+    <div class="scene-tag"><span class="tag-square">↗</span><div>GALATA / KARAKÖY<small>CANLI DEMO · KOVALAMACA SÜRÜYOR</small></div></div>
+    <div class="scene-bottom"><span>01 — REDLINE CITY</span><span>LASTİK İZİNİ BIRAK.</span></div>
+  </div>
+
+  <div id="hud" class="hidden">
+    <div class="hud-top"><div class="hud-brand"><span class="brand-mark">R</span><div><b>REDLINE</b><span id="district">MERKEZ</span></div></div><div class="wanted-box"><div id="wanted" class="wanted">★<span>★★★★</span></div><small id="pursuit-state">TAKİP EDİLİYORSUN</small><div id="escape-bar"><i></i></div></div><div class="score-box"><small>SKOR</small><b id="score">000000</b><span id="record-label">EN İYİ <i>0</i></span></div></div>
+    <div class="mission-card"><span class="tiny-label">SOKAK GÖREVİ <i id="mission-index">01</i></span><strong id="mission-title">Yanlamaya başla</strong><span id="mission-desc">Drift ile 400 puan topla.</span><div class="mission-track"><i id="mission-progress"></i></div><small id="mission-count">0 / 400</small></div>
+    <div class="run-info"><span id="run-time">00:00</span><span>✕ <b id="wrecks">0</b> POLİS</span><span id="mode-label">KOVALAMACA</span></div>
+    <div id="foot-hud" class="foot-hud hidden"><small>POLAT</small><b id="foot-weapon">TABANCA</b><strong id="foot-ammo">14 / 98</strong><span id="foot-state">R DOLDUR · B İLK YARDIM</span><div><i id="foot-stamina"></i></div><small>WASD · SHIFT · SPACE · 1–6</small></div><div id="equipment-hud" class="equipment-hud"><div class="equipment-heading"><span>EKİPMAN</span><span id="hud-wallet">₺ 0</span></div><button id="equip-turret"><kbd>Q</kbd><span>↙ ARKA CAM<small>TAKILI DEĞİL</small></span><b>—</b></button><button id="equip-mine"><kbd>Z</kbd><span>✹ MAYIN<small>TAKILI DEĞİL</small></span><b>—</b></button><button id="equip-oil"><kbd>C</kbd><span>≈ YAĞ<small>TAKILI DEĞİL</small></span><b>—</b></button></div><div id="combo" class="combo"><small id="combo-caption">DRIFT</small><b id="combo-points">+ 0</b><span id="combo-multiplier">×1.0</span><div><i id="combo-bar"></i></div></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="interaction" class="interaction hidden"><kbd>E</kbd><span>GARAJA SIĞIN · PUANINI BANKALA</span></div>
+    <div class="hud-bottom"><div class="radar-block"><div class="radar-title"><span>◉ CANLI HARİTA</span><span>N ↑</span></div><canvas id="radar" width="190" height="170" aria-label="Mini harita"></canvas><div class="radar-legend"><span><i class="orange"></i> SEN</span><span><i class="red"></i> POLİS</span><span><i class="green"></i> GARAJ</span></div></div><div class="key-hints"><span><kbd>WASD</kbd> SÜR</span><span><kbd>SPACE</kbd> DRIFT</span><span><kbd>SHIFT</kbd> NİTRO</span><span><kbd>ESC</kbd> DURAKLAT</span></div><div class="car-status"><div class="speed-wrap"><svg viewBox="0 0 180 120"><path class="gauge-bg" d="M 20 100 A 75 75 0 1 1 160 100"/><path id="gauge" d="M 20 100 A 75 75 0 1 1 160 100"/></svg><div class="speed-digits"><b id="speed">0</b><span>KM/H</span></div><span id="gear" class="gear">N</span></div><div class="status-bar"><span id="health-label">KAPORTA</span><div><i id="health"></i></div><b id="health-number">100</b></div><div class="status-bar nitro"><span id="nitro-label">NİTRO</span><div><i id="nitro"></i></div><b id="nitro-number">100</b></div></div></div>
+    <div id="map-credit" class="map-credit hidden">© OpenStreetMap contributors · ODbL</div><div class="hud-buttons"><button id="journal-open">H DEFTER</button><button id="armory-open">O ÇANTA</button><button id="sound-toggle" aria-label="Sesi aç veya kapat">SES AÇIK</button><button id="map-toggle">M HARİTA</button><button id="pause-button" aria-label="Duraklat">Ⅱ</button></div>
+    <div id="navigation" class="navigation hidden"><span id="nav-arrow">↑</span><div><b id="nav-distance">0 M</b><small id="nav-name">GARAJ</small></div><button id="nav-clear" aria-label="Rotayı temizle">×</button></div>
+  </div>
+
+  <div id="touch-controls" class="hidden"><div class="touch-actions"><button id="vehicle-button">F ↔</button><button id="foot-interact">E</button><button id="foot-fire">ATEŞ</button></div><div class="touch-steering"><button data-key="left" aria-label="Sola dön">◀</button><button data-key="right" aria-label="Sağa dön">▶</button></div><div class="touch-pedals"><button data-key="nitro">N₂O</button><button data-key="handbrake">DRIFT</button><button data-key="brake">FREN</button><button data-key="throttle">GAZ</button></div></div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title"><section class="modal-card"><button id="modal-close" class="close" aria-label="Kapat">✕</button><div id="modal-content"></div></section></div>
+  <div id="map-screen" class="map-screen hidden"><div class="map-header"><div><span class="eyebrow">İKİ YAKA. DÖRT BÖLGE.</span><h2>REDLINE CITY</h2></div><button id="map-close">KAPAT <kbd>M</kbd></button></div><canvas id="big-map" width="760" height="760" aria-label="Hedef işaretlemek için haritaya dokun"></canvas><div class="map-key"><span>🟠 Sen</span><span>🔴 Polis</span><span>🟢 Sığınak</span><span>✚ Ücretli tamir</span><span>H Helikopter</span></div><div class="map-actions"><span id="map-tip">Hedefe dokun. Kilitli bölgeleri satın al.</span><button id="map-shop">BÖLGE / SIĞINAK SATIN AL</button><button id="map-nearest">SIĞINAĞA ROTA ↗</button></div></div>
+  <div id="boot"><span class="brand-mark">R</span><b>REDLINE</b><span>Şehir hazırlanıyor…</span></div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

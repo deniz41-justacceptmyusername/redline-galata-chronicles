@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REDLINE — Street geometry check</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#172c25;color:#e1dbc8;font:13px Arial}header{height:58px;display:flex;align-items:center;gap:8px;padding:10px 16px}b{margin-right:12px}button{background:#334b3f;border:1px solid #7a8972;padding:9px;color:#e7e0c9;cursor:pointer}button[aria-pressed=true]{background:#a9673e}#result{margin-left:auto;font-size:12px}canvas{display:block;width:100vw;height:calc(100vh - 58px)}footer{position:fixed;bottom:8px;right:12px;color:#e7e0c9;background:#173025b0;padding:6px;font-size:10px}</style>
+<header><b>REDLINE / SOKAK KONTROLÜ</b><button data-place="home">POLATIN EVİ</button><button data-place="restaurant">LOKANTA</button><button data-place="mechanic">ATÖLYE</button><button data-place="shore">RIHTIM</button><button data-place="club">ARKA SOKAKLAR</button><span id="result">Checking…</span></header><canvas id="view"></canvas><footer>© OpenStreetMap contributors · ODbL 1.0</footer>
+<script type="module">
+import {Simulation} from './simulation.js';
+import {Renderer} from './render.js';
+import './render-v3.js';
+const sim=new Simulation({mode:'story',mapId:'real',seed:32}),canvas=document.getElementById('view'),renderer=new Renderer(canvas,sim,{quality:'high',night:false,shake:false});
+const tiny=document.createElement('canvas');tiny.width=tiny.height=256;const c=tiny.getContext('2d'),world={roads:[{walk:false,kind:'residential',width:70,points:[['a',40,128],['b',216,128]],bounds:{x:40,y:128,w:176,h:0}},{walk:false,kind:'residential',width:70,points:[['c',128,40],['d',128,216]],bounds:{x:128,y:40,w:0,h:176}}],walkPaths:[{kind:'footway',width:13,path:[[70,80],[210,180]]}],roadJunctionIds:new Set()};
+const stub={sim:{world}};Renderer.prototype.drawRealRoads.call(stub,c,{x:0,y:0,w:256,h:256});let checked=0,errors=0;for(let x=55;x<202;x+=3)for(let y=55;y<202;y+=3){if(Math.abs(x-128)>30&&Math.abs(y-128)>30)continue;const p=c.getImageData(x,y,1,1).data;checked++;if(p[0]!==73||p[1]!==86||p[2]!==80)errors++;}
+document.getElementById('result').textContent=errors?'FAIL: '+errors+' road pixels':'PASS · '+checked+' kavşak pikseli';
+if(errors)document.getElementById('result').style.color='#ffa287';
+function view(id){const p=sim.world.locations.find(l=>l.id===id);sim.player.x=p.x;sim.player.y=p.y;sim.player.angle=sim.world.spawn.angle||0;renderer.setSim(sim);renderer.camera.zoom=1;renderer.w=innerWidth;renderer.h=innerHeight-58;canvas.width=Math.round(renderer.w*renderer.ratio);canvas.height=Math.round(renderer.h*renderer.ratio);renderer.render(1/60);document.querySelectorAll('[data-place]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.place===id)));}
+document.querySelectorAll('[data-place]').forEach(b=>b.onclick=()=>view(b.dataset.place));view('home');window.addEventListener('resize',()=>view(document.querySelector('[aria-pressed=true]').dataset.place));
+</script>

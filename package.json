@@ -1,0 +1,23 @@
+{
+  "name": "redline-drift-city",
+  "version": "3.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs"
+  },
+  "description": "A bilingual top-down Istanbul crime story with drifting, real OpenStreetMap streets, on-foot combat, police and SWAT pursuits.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "game",
+    "javascript",
+    "canvas",
+    "drifting",
+    "police-chase",
+    "bilingual"
+  ]
+}

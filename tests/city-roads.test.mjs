@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {prepareCityRoads} from '../dist/city-roads.js';
+import {makeRealWorld,roadClearance} from '../dist/real-world.js';
+import {pointDrivable} from '../dist/world.js';
+test('duplicate OSM edges are removed even if a second way runs in reverse',()=>{const data=[{id:'a',kind:'residential',walk:false,points:[['a',0,0],['b',100,0],['c',200,0]]},{id:'b',kind:'residential',walk:false,points:[['c',200,0],['b',100,0],['a',0,0]]}],result=prepareCityRoads(data);assert.equal(result.duplicates,2);assert.equal(result.roads.length,1);});
+test('road simplification keeps shared junctions and makes pedestrian streets usable alleys',()=>{const result=prepareCityRoads([{id:'a',kind:'residential',walk:false,points:[['a',0,0],['b',100,1],['c',200,0]]},{id:'b',kind:'pedestrian',walk:true,points:[['b',100,1],['d',100,100]]}]);assert.ok(result.roads[0].points.some(p=>p[0]==='b'));assert.equal(result.roads.find(r=>r.kind==='pedestrian').walk,false);assert.ok(result.roads.find(r=>r.kind==='pedestrian').width>=54);});
+test('footway rendering stays outside buildings and vehicle surfaces',()=>{const w=makeRealWorld();let points=0;for(const path of w.walkPaths){for(const [x,y] of path.path){assert.ok(pointDrivable(w,{x,y},3));assert.equal(roadClearance(w,{x,y},-path.width/2-8),false);points++;}}assert.ok(points>1000);});
+test('real-city spawn faces a connected street and cover follows the street direction',()=>{const w=makeRealWorld(),start=w.navNodes.find(n=>Math.hypot(n.x-w.spawn.x,n.y-w.spawn.y)<1);assert.ok(start);assert.ok(start.neighbors.some(id=>{const q=w.navIndex.get(id);return Math.abs(Math.sin(Math.atan2(q.y-start.y,q.x-start.x)-w.spawn.angle))<1e-6;}));assert.ok(w.covers.every(c=>c.poly?.length===4&&c.center&&Number.isFinite(c.angle)));});
